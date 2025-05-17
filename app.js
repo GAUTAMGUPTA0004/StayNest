@@ -19,28 +19,19 @@ const passport=require("passport")
 const LocalStrategy=require("passport-local");
 const User = require('./Models/user.js');
 const MongoStore = require('connect-mongo');
+const mongoose = require('mongoose');
 
+const dbUrl = process.env.ATLASDB_URL;
+main()
+    .then(()=>{
+        console.log("connection successful")
 
+    })
+    .catch((err)=>console.log(err));
 
-
-
-
-
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()))
-passport.serializeUser(User.serializeUser())
-passport.deserializeUser(User.deserializeUser())
-
-
-
-app.use((req,res,next)=>{
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error")
-  res.locals.currUser=req.user
-  
-  next();
-})
+    async function main() {
+    await mongoose.connect(dbUrl);
+}
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -49,12 +40,7 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
-const mongoose = require('mongoose');
-
- const dbUrl = process.env.ATLASDB_URL;
-
-
- const store =  MongoStore.create({
+const store =  MongoStore.create({
     mongoUrl: dbUrl,
     crypto: {
         secret: process.env.SECRET, 
@@ -85,17 +71,22 @@ app.use(session(sessionOptions));
 app.use(flash());
 
 
-main()
-    .then(()=>{
-        console.log("connection successful")
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()))
 
-    })
-    .catch((err)=>console.log(err));
 
-    async function main() {
-    await mongoose.connect(dbUrl);
-}
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
 
+
+app.use((req,res,next)=>{
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error")
+  res.locals.currentuser=req.user
+  
+  next();
+})
 
 
 

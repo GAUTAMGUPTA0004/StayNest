@@ -30,7 +30,7 @@
           </p>
         </div>
       </div>
-   <%  if(currUser && listing.owner._id.equals(currUser._id)){%>
+   <%  if(currentuser && listing.owner._id.equals(currentuser._id)){%>
         <div class="btns">
     <a href="/listings/edit/<%= listing._id %>" class="btn btn-dark col-1 offset-3 edit-btn">Edit </a>
   <form method="post" action="/listings/<%=listing._id%>?_method=DELETE">
@@ -41,7 +41,7 @@
       
    
     <div class="col-8 offset-3 mb-3 "> 
-      <%if(currUser){%>
+      <%if(currentuser){%>
       <h4>Leave a Review</h4>
       <form action="/listings/<%= listing._id %>/reviews"  method="post" novalidate class="needs-validation">
         
